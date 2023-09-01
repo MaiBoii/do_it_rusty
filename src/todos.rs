@@ -1,13 +1,14 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Date {
-    Todos: Vector<Todos>
+    today: String,
+    todos: Vector<Todo>
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Todos {
+pub struct Todo {
     id: u32,
-    title: String,
-    completed: String,
+    content: String,
+    completed: bool,
 }

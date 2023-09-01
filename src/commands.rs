@@ -1,23 +1,6 @@
 use std::{collections::HashMap};
 use std::io;
-use chrono::{Local, Datelike};
 
-static COUNT: u32 = 0;
-
-pub fn get_now_time() -> String {
-    let local_time = Local::now();
-
-    // 연도, 월, 일을 가져와서 문자열로 변환
-    let year = local_time.year();
-    let month = local_time.month();
-    let day = local_time.day();
-
-    // 문자열로 변환
-    let today_date = format!("{}-{:02}-{:02}", year, month, day);
-    let todo_id = format!("{}{:02}{:02}{}", year,month,day,COUNT);
-
-    today_date
-}
 
 enum Action {
     Add,
@@ -91,3 +74,4 @@ fn manage_task(tasks: &mut HashMap<String, bool>, action: Action) {
         _ => {}
     }
 }
+

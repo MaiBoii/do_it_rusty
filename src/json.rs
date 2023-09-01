@@ -4,12 +4,14 @@ use std::io::Write;
 use std::path::Path;
 
 mod todos;
+mod date;
 
-pub fn save_to_document_dir(){
+//todo 데이터들 저장할 디렉토리 특정
+pub fn specific_save_dir(){
     if let Some(document_dir) = document_dir(){
         // 해당 컴퓨터 문서 폴더명 특정
         let document_path = document_dir.to_str().unwrap();
-        // 저장할 폴더 경로 지정
+        // 저장할 디렉토리 경로 지정
         let folder_path = document_path + String::from("/todos");
     } else {
         //만약에 없으면 만들기
@@ -17,13 +19,20 @@ pub fn save_to_document_dir(){
             fs::create_dir_all(folder_path).expect("디렉토리를 만드는데 실패해버렸으");
         }
     }
+}
+
+//JSON 파일명 지정 및 저장
+pub fn save_to_document_dir(date: Date){
     // 파일 경로
-    let file_path = format!("{}/todo.json", folder_path);
+    let file_path = format!("{}/{}.json", folder_path,date::today);
 
     // JSON 파일 생성 및 데이터 저장
-    let mut file = File::create(file_path).expect("Failed to create file");
+    let mut file = File::create(file_path).expect("파일을 생성하는데 실패했습니다.");
     file.write_all(json_data.as_bytes()).expect("Failed to write data to file");
 
     println!("JSON 데이터를 저장했습니다.");
 }
 
+fn generate_id() -> u32{
+
+}
