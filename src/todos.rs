@@ -6,7 +6,7 @@ pub struct Date {
 }
 
 #[derive(Serialize, Deserialize)]
-struct Todos {
+pub struct Todos {
     id: u32,
     title: String,
     completed: String,

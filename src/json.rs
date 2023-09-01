@@ -3,6 +3,8 @@ use std::fs::{self, File};
 use std::io::Write;
 use std::path::Path;
 
+mod todos;
+
 pub fn save_to_document_dir(){
     if let Some(document_dir) = document_dir(){
         // 해당 컴퓨터 문서 폴더명 특정
@@ -24,3 +26,4 @@ pub fn save_to_document_dir(){
 
     println!("JSON 데이터를 저장했습니다.");
 }
+
