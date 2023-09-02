@@ -2,13 +2,13 @@ use cliclack::log;
 use std::process;
 use console::style;
 
-mod date;
+mod json;
 
 fn main() -> std::io::Result<()> {
 
     cliclack::clear_screen()?;
 
-    let today:String = format!("ToDo-Rustyy - {}",date::get_now_time());
+    let today:String = format!("ToDo-Rustyy - {}", json::date::get_now_time("intro"));
 
     cliclack::intro(style(today).on_yellow().black())?;
     log::step("1. 할 일 추가\n2. 할 일 완료\n3. 할 일 수정\n4. 할 일 조회\n5. 할 일 삭제\n6. 종료")?;
@@ -25,6 +25,7 @@ fn main() -> std::io::Result<()> {
         })
         .interact()?;
 
+    //선택지에 따른 match문 갈래
     match selection.as_str(){
         "1" => {
             let _kind = cliclack::select(format!("무슨 일정을 추가하시겠어요?'{selection}'"))
@@ -35,11 +36,12 @@ fn main() -> std::io::Result<()> {
             .interact()?;
         }
         "2" => {
-            let _kind = cliclack::select(format!("무슨 일정을 완료하셨나요?'{selection}'"))
-            .initial_value("ts")
-            .item("ts", "TypeScript", "")
-            .item("js", "JavaScript", "")
-            .item("coffee", "CoffeeScript", "oh no")
+            let _tools = cliclack::multiselect("무슨 일정을 완료하시겠어요?")
+            .initial_values(vec!["prettier", "eslint"])
+            .item("prettier", "Prettier", "recommended")
+            .item("eslint", "ESLint", "recommended")
+            .item("stylelint", "Stylelint", "")
+            .item("gh-action", "GitHub Action", "")
             .interact()?;
         }
         "3" => {
