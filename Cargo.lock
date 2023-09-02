@@ -292,6 +292,7 @@ dependencies = [
  "cliclack",
  "console",
  "dirs",
+ "lazy_static",
  "serde",
  "serde_json",
 ]
