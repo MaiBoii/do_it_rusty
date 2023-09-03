@@ -49,11 +49,11 @@ fn main() -> std::io::Result<()> {
             })
             .interact()?;
 
-            //첫 번째 일정을 입력하면 오늘자 Date 파일 생성, 없으면 넘기기
+            //오늘자 첫 번째 일정을 입력하면 오늘의 빈 Date 파일 생성, 없으면 넘기기
             json::create_or_skip_todays_json_file()?;
 
             //입력한 todo_content를 오늘자 Date에다 저장하기
-            
+            let _ = json::add_task(todo_content);
 
             cliclack::outro(
                 "입력하신 일정을 추가하였습니다.\n",
