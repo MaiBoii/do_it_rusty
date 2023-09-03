@@ -7,6 +7,7 @@ mod json;
 
 fn main() -> std::io::Result<()> {
 
+    //문서 폴더 아래있는 rust_todo 폴더 경로 전역변수
     let _ = *TODO_FOLDER_PATH;
 
     cliclack::clear_screen()?;
@@ -28,11 +29,14 @@ fn main() -> std::io::Result<()> {
         })
         .interact()?;
 
+    cliclack::clear_screen()?;
+
     //선택지에 따른 match문 갈래
     match selection.as_str(){
-
         //추가하기
         "1" => {
+            let today:String = format!("ToDo-Rustyy - {}", json::date::get_now_time("intro"));
+            cliclack::intro(style(today).on_yellow().black())?;
 
             let todo_content: String = cliclack::input("무슨 일정을 추가하시겠어요?")
             .placeholder("할 일을 입력해주세요.")
@@ -45,17 +49,22 @@ fn main() -> std::io::Result<()> {
             })
             .interact()?;
 
-            
+            //첫 번째 일정을 입력하면 오늘자 Date 파일 생성, 없으면 넘기기
+            json::create_or_skip_todays_json_file()?;
 
-            //입력한 todo_content json파일로 저장하기
+            //입력한 todo_content를 오늘자 Date에다 저장하기
+            
 
             cliclack::outro(
                 "입력하신 일정을 추가하였습니다.\n",
             )?;
         }
 
-        //완료 처리
+        //완료 처리하기
         "2" => {
+            let today:String = format!("ToDo-Rustyy - {}", json::date::get_now_time("intro"));
+            cliclack::intro(style(today).on_yellow().black())?;
+
             let _tools = cliclack::multiselect("무슨 일정을 완료하시겠어요?")
             .initial_values(vec!["prettier", "eslint"])
             .item("prettier", "Prettier", "recommended")
@@ -71,6 +80,9 @@ fn main() -> std::io::Result<()> {
 
         //수정하기
         "3" => {
+            let today:String = format!("ToDo-Rustyy - {}", json::date::get_now_time("intro"));
+            cliclack::intro(style(today).on_yellow().black())?;
+
             let _kind = cliclack::select(format!("무슨 일정을 수정하실래요?'{selection}'"))
             .initial_value("ts")
             .item("ts", "TypeScript", "")
@@ -84,20 +96,28 @@ fn main() -> std::io::Result<()> {
         }
 
 
-        //조회
+        //조회하기
         "4" => {
+            let today:String = format!("ToDo-Rustyy - {}", json::date::get_now_time("intro"));
+            cliclack::intro(style(today).on_yellow().black())?;
+
             //오늘자 todo 파일에 content 값 다 가져와서 문자열 변수에다 넣기
-            let next_steps = "fuck Ufuck Ufuck Ufuck Ufuck Ufuck Ufuck Ufuck U\nfuck Ufuck U";
-            cliclack::note("Lists", next_steps)?;
+            log::success("This is a success")?;
+            log::step("This is a submitted step")?;
+            log::success("This is a success")?;
+            log::step("This is a submitted step")?;
             
             cliclack::outro(
-                "n개의 일정이 남아있습니다.\n",
+                "이상 n개의 일정이 남아있습니다.\n",
             )?;
         }
 
 
-        //삭제
+        //삭제하기 
         "5" => {
+            let today:String = format!("ToDo-Rustyy - {}", json::date::get_now_time("intro"));
+            cliclack::intro(style(today).on_yellow().black())?;
+            
             let _tools = cliclack::multiselect("무슨 일정을 삭제하실래요?")
                 .initial_values(vec!["prettier", "eslint"])
                 .item("prettier", "Prettier", "recommended")
@@ -105,14 +125,18 @@ fn main() -> std::io::Result<()> {
                 .item("stylelint", "Stylelint", "")
                 .item("gh-action", "GitHub Action", "")
                 .interact()?;
+
+            cliclack::outro(
+                "해당 일정을 삭제하였습니다.\n",
+            )?;
         }
 
-        //종료
+        //종료하기 
         "6" => {
             println!("GOOD BYE!");
             process::exit(0);
         }
         _ => println!("blahh blahhh"),
-}
+    }
     Ok(())
 }
