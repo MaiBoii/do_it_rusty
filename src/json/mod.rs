@@ -55,7 +55,7 @@ pub fn add_task(task: String) -> Result<(), io::Error> {
     println!("{}", file_path);
     
     let todo = Todo {
-        id: 0,
+        id: generate_task_id()? as u32,
         content: task.to_string(),
         completed: false 
     };
@@ -77,6 +77,21 @@ pub fn add_task(task: String) -> Result<(), io::Error> {
     serde_json::to_writer(file, &parsed)?;
 
     Ok(())
+}
+
+pub fn get_all_todos() -> Result<Vec<(u32, String)>, io::Error> {
+    let file_path = format!("{}/{}.json" ,*TODO_FOLDER_PATH,date::get_now_time("todo_id"));
+
+    let file = File::open(file_path.clone())?;
+    let parsed: Date = serde_json::from_reader(BufReader::new(file))?;
+
+    let mut todos: Vec<(u32, String)> = Vec::new();
+
+    for todo in parsed.todos {
+        todos.push((todo.id,todo.content));
+    }
+
+    Ok(todos)
 }
 
 pub fn complete_task(task_id: usize) -> Result<(), io::Error> {
@@ -155,18 +170,28 @@ pub fn get_incomplete_tasks() -> Result<Vec<String>, io::Error> {
     Ok(todos)
 }
 
-pub fn get_all_tasks() -> Result<Vec<String>, io::Error> {
+// fn get_all_tasks() -> Result<Vec<Todo>, io::Error> {
+//     let file_path = format!("{}/{}.json" ,*TODO_FOLDER_PATH,date::get_now_time("todo_id"));
+
+//     let file = File::open(file_path.clone())?;
+//     let parsed: Date = serde_json::from_reader(BufReader::new(file))?;
+
+//     let mut todos: Vec<String> = Vec::new();
+
+//     for todo in parsed.todos {
+//         todos.push(todo.content);
+//     }
+
+//     Ok(parsed.todos)
+// }
+
+fn generate_task_id() -> Result<usize, io::Error> {
+    //make todo's id by counting todos
     let file_path = format!("{}/{}.json" ,*TODO_FOLDER_PATH,date::get_now_time("todo_id"));
 
     let file = File::open(file_path.clone())?;
+
     let parsed: Date = serde_json::from_reader(BufReader::new(file))?;
 
-    let mut todos: Vec<String> = Vec::new();
-
-    for todo in parsed.todos {
-        todos.push(todo.content);
-    }
-
-    Ok(todos)
+    Ok(parsed.todos.len())
 }
-

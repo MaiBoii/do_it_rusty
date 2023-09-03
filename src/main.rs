@@ -1,7 +1,7 @@
 use cliclack::{log, MultiSelect, Select};
 use std::process;
 use console::style;
-use json::{TODO_FOLDER_PATH, todos::{Date, Todo}, date::get_now_time};
+use json::TODO_FOLDER_PATH;
 
 mod json;
 
@@ -69,9 +69,12 @@ fn main() -> std::io::Result<()> {
 
             let mut multi_select = MultiSelect::new("무슨 일정을 완료하시겠어요?");
     
-            for i in 1..=10 {
-                multi_select = multi_select.item(i, format!("Number {}", i), "");
+            for todo in json::get_all_todos().unwrap() {
+                multi_select = multi_select.item(todo.0, todo.1, "");
             }
+            // for i in 1..=10 {
+            //     multi_select = multi_select.item(i, format!("Number {}", i), "");
+            // }
 
             let _tools = multi_select.interact()?;
 
@@ -102,7 +105,7 @@ fn main() -> std::io::Result<()> {
             let today:String = format!("ToDo-Rustyy - {}", json::date::get_now_time("intro"));
             cliclack::intro(style(today).on_yellow().black())?;
 
-            println!("{:#?}",json::get_all_tasks().unwrap());
+            println!("{:#?}",json::get_all_todos().unwrap());
 
             //오늘자 todo 파일에 content 값 다 가져와서 문자열 변수에다 넣기
             log::success("This is a success")?;
