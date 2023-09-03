@@ -11,7 +11,7 @@ pub struct Date {
 //일정 단위
 #[derive(Serialize, Deserialize)]
 pub struct Todo {
-    pub(crate) id: u32,
+    pub(crate) id: usize,
     pub(crate) content: String,
     pub(crate) completed: bool,
 }

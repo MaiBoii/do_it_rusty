@@ -33,6 +33,7 @@ fn main() -> std::io::Result<()> {
 
     //선택지에 따른 match문 갈래
     match selection.as_str(){
+
         //추가하기
         "1" => {
             let today:String = format!("ToDo-Rustyy - {}", json::date::get_now_time("intro"));
@@ -60,26 +61,27 @@ fn main() -> std::io::Result<()> {
             )?;
         }
 
-        //완료 처리하기
+        //완료-미완료 처리하기
         "2" => {
             // 1.오늘자 Date 날짜에 todos가 비어있으면 예외처리하기
-            
+
             let today:String = format!("ToDo-Rustyy - {}", json::date::get_now_time("intro"));
             cliclack::intro(style(today).on_yellow().black())?;
 
-            let mut multi_select = MultiSelect::new("무슨 일정을 완료하시겠어요?");
+            let mut multi_select = MultiSelect::new("무슨 일정을 완료/미완료하시겠어요?");
     
-            for todo in json::get_all_todos().unwrap() {
+            for todo in json::get_all_tasks().unwrap() {
                 multi_select = multi_select.item(todo.0, todo.1, "");
             }
-            // for i in 1..=10 {
-            //     multi_select = multi_select.item(i, format!("Number {}", i), "");
-            // }
 
-            let _tools = multi_select.interact()?;
+            let _completed = multi_select.interact()?;
+
+            for todo in _completed {
+                let _ = json::complete_incomplete_task(todo);
+            }
 
             cliclack::outro(
-                "입력하신 일정을 완료 처리하였습니다.\n",
+                "입력하신 일정을 완료/미완료 처리하였습니다.\n",
             )?;
         }
 
@@ -88,12 +90,26 @@ fn main() -> std::io::Result<()> {
             let today:String = format!("ToDo-Rustyy - {}", json::date::get_now_time("intro"));
             cliclack::intro(style(today).on_yellow().black())?;
 
-            let _kind = cliclack::select(format!("무슨 일정을 수정하실래요?'{selection}'"))
-            .initial_value("ts")
-            .item("ts", "TypeScript", "")
-            .item("js", "JavaScript", "")
-            .item("coffee", "CoffeeScript", "oh no")
+            let mut select = Select::new("무슨 일정을 완료하시겠어요?");
+    
+            for todo in json::get_all_tasks().unwrap() {
+                select = select.item(todo.0, todo.1, "");
+            }
+
+            let _modified = select.interact()?;
+
+            let modified_result: String = cliclack::input("수정할 내용을 입력해주세요.")
+            .placeholder("할 일을 입력해주세요.")
+            .validate(|input: &String| {
+                if input.is_empty() {
+                    Err("수정할 내용을 입력해주세요.")
+                } else {
+                    Ok(())
+                }
+            })
             .interact()?;
+
+            json::update_task(_modified, modified_result)?;
 
             cliclack::outro(
                 "해당 일정을 수정하였습니다.\n",
@@ -105,35 +121,36 @@ fn main() -> std::io::Result<()> {
             let today:String = format!("ToDo-Rustyy - {}", json::date::get_now_time("intro"));
             cliclack::intro(style(today).on_yellow().black())?;
 
-            println!("{:#?}",json::get_all_todos().unwrap());
-
             //오늘자 todo 파일에 content 값 다 가져와서 문자열 변수에다 넣기
-            log::success("This is a success")?;
-            log::step("This is a submitted step")?;
-            log::success("This is a success")?;
-            log::step("This is a submitted step")?;
-            
+
+            for todo in json::get_all_tasks().unwrap() {
+                log::success(format!("{}", todo.1))?;
+            }
+
             cliclack::outro(
                 "이상 n개의 일정이 남아있습니다.\n",
             )?;
         }
-
 
         //삭제하기 
         "5" => {
             let today:String = format!("ToDo-Rustyy - {}", json::date::get_now_time("intro"));
             cliclack::intro(style(today).on_yellow().black())?;
             
-            let _tools = cliclack::multiselect("무슨 일정을 삭제하실래요?")
-                .initial_values(vec!["prettier", "eslint"])
-                .item("prettier", "Prettier", "recommended")
-                .item("eslint", "ESLint", "recommended")
-                .item("stylelint", "Stylelint", "")
-                .item("gh-action", "GitHub Action", "")
-                .interact()?;
+            let mut multi_select = MultiSelect::new("무슨 일정을 삭제할래요?");
+    
+            for todo in json::get_all_tasks().unwrap() {
+                multi_select = multi_select.item(todo.0, todo.1, "");
+            }
+
+            let _completed = multi_select.interact()?;
+
+            for todo in _completed {
+                let _ = json::delete_task(todo);
+            }
 
             cliclack::outro(
-                "해당 일정을 삭제하였습니다.\n",
+                "입력하신 일정을 삭제하였습니다.\n",
             )?;
         }
 
