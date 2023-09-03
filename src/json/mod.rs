@@ -103,10 +103,12 @@ pub fn complete_incomplete_task(task_id: usize) -> Result<(), io::Error> {
     let file = File::open(file_path.clone())?;
     let mut parsed: Date = serde_json::from_reader(BufReader::new(file))?;
 
-    if parsed.todos[task_id].completed {
-        parsed.todos[task_id].completed = false;
+    let target_index = parsed.todos.iter().position(|x| x.id == task_id).unwrap();
+
+    if parsed.todos[target_index].completed {
+        parsed.todos[target_index].completed = false;
     } else {
-        parsed.todos[task_id].completed = true;
+        parsed.todos[target_index].completed = true;
     }
 
     let file = File::create(file_path)?;
