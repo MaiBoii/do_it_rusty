@@ -127,8 +127,16 @@ fn main() -> std::io::Result<()> {
                 log::success(format!("{}", todo.1))?;
             }
 
+            //count incompleted tasks
+            let mut count: usize = 0;
+            for todo in json::get_all_tasks().unwrap() {
+                if !todo.1.contains("✅"){
+                    count += 1;
+                }
+            }
+
             cliclack::outro(
-                "이상 n개의 일정이 남아있습니다.\n",
+                format!("이상 {count}개의 일정이 남아있습니다.\n"),
             )?;
         }
 
